@@ -1,0 +1,62 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+#load relevant libraries:
+library(ggplot2)
+library(dplyr)
+```
+
+```{r}
+#There are many more (~13 times more) examples of Ideal diamonds than there are Fair:
+diamonds %>% count(cut)
+```
+ 
+
+```{r}
+head(diamonds)
+```
+```{r}
+
+#Visualize:
+
+ggplot(diamonds, aes(price,cut))+
+  geom_point()
+
+#pricing is not gaussian distributed:
+ggplot(diamonds, aes(price)) + 
+  geom_histogram()
+
+
+ggplot(diamonds, aes(cut)) + 
+  geom_histogram(stat = "count")
+
+ggplot(data = diamonds , aes(x = carat, y = price, color = cut)) +
+ geom_point() + 
+  facet_grid(rows = vars(cut))
+
+ggplot(data = diamonds , aes(x = price, y = depth, color = cut)) +
+ geom_point() + 
+  facet_grid(rows = vars(cut))
+
+
+ggplot(diamonds %>% filter(cut %in% c("Fair")), aes(price, fill = cut)) + #fill adds the option of seperating the data in the bars by catagory
+  geom_bar(position = "dodge")+
+  coord_cartesian(ylim=c(0,21))+
+  facet_grid(rows = vars(cut))
+
+diamonds %>% distinct(color)
+diamonds %>% distinct(clarity)
+diamonds %>% distinct(depth)
+
+
+
+diamonds %>% distinct(cut)
+```
+

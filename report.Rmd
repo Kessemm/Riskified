@@ -1,0 +1,74 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+# Question: Do lower quality cut diamonds have a higher price than higher quality diamonds?
+
+#First, let us examine the catagorical data provided, how many examples from each catagory do we have?
+
+diamonds %>% count(cut)
+
+#There are ~13 times more Ideal diamond examples than Fair. First thing to note: the data is imbalanced. 
+
+
+#Let us look at each catagory and understand it more thoroughly:
+
+summary <-
+  diamonds %>% 
+  select(cut, price) %>% 
+  group_by(cut) %>% 
+  summarise(min(price), max(price), median(price), mean = mean(price))
+
+#plot the average as a function of diamond cut:
+ggplot(summary, aes(x = cut, y = mean))+
+  geom_point()
+
+#
+ggplot(diamonds, aes(price, fill = cut)) + #fill adds the option of seperating the data in the bars by catagory
+  geom_bar()+
+  coord_cartesian(ylim=c(0,21))+
+  facet_grid(rows = vars(cut))
+
+
+ggplot(diamonds %>% filter(cut %in% c("Fair")), aes(price, fill = cut)) + #fill adds the option of seperating the data in the bars by catagory
+  geom_bar()+
+  coord_cartesian(ylim=c(0,5), xlim=c(10000,20000))+
+  facet_grid(rows = vars(cut))
+
+
+#check how many "high" values there are:
+diamonds%>% filter(price > 10000) %>% group_by(cut) %>% summarize(high = n()) %>% left_join(diamonds %>% count(cut)) %>% mutate(high_precent = high/n)
+
+
+
+
+#let's look at th carat:
+#in general:
+ggplot(data = diamonds , aes(x = carat, y = price)) +
+ geom_point()
+#showing correlation:
+ggplot(data = diamonds , aes(x = log(carat), y = log(price))) +
+ geom_point()
+
+#for each cut catagory:
+ggplot(data = diamonds , aes(x = carat, y = price, color = cut)) +
+ geom_point() + 
+  facet_grid(rows = vars(cut))
+
+
+
+diamonds %>% filter(cut %in% c("Fair")) %>% filter(price > 10000) %>% group_by(cut) %>% summarize(mean(carat),median(carat))
+diamonds %>% filter(cut %in% c("Ideal")) %>% filter(price > 10000) %>% group_by(cut) %>% summarize(mean(carat),median(carat))
+
+#
+ggplot(data = diamonds %>% filter(cut %in% c("Fair")) %>% filter(price > 10000) , aes(x = carat, y = price)) +
+ geom_point()
+
+
+ 
+
+
+```
+
